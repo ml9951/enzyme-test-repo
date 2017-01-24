@@ -17,7 +17,7 @@ class TestComponent extends React.Component {
 }
 
 describe('Issue #785', () => {
-  it('Updates form state', done => {
+  it('Saves an object to a store', done => {
     const wrapper = mount(<TestComponent/>)
     Store.on('object-saved', () => {
       done()
