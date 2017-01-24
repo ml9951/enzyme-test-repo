@@ -1,27 +1,30 @@
 import React from 'react';
-import chai, {expect} from 'chai';
-import chaiEnzyme from 'chai-enzyme';
 import {mount} from 'enzyme';
 import sinon from 'sinon';
 
-chai.use(chaiEnzyme());
+import * as Actions from './actions/Actions'
+import Store from './stores/Store'
 
 class TestComponent extends React.Component {
   render() {
     return (
       <div>
         <h1>Hello, {this.props.name}</h1>
+        <button onClick={() => Actions.save({})}>save</button>
       </div>
     );
   }
 }
 
-/**
- * Change the `describe` and `it` block so it acurately describes
- * the test that you are trying to reproduce.
- */
-
 describe('Issue #785', () => {
+  it('Updates form state', done => {
+    const wrapper = mount(<TestComponent/>)
+    Store.on('object-saved', () => {
+      done()
+    })
+    wrapper.find('button').simulate('click')
+  })
+
   it('should call lifecycle methods on mount/unmount', () => {
     const willMount = sinon.spy();
     const didMount = sinon.spy();
@@ -42,13 +45,14 @@ describe('Issue #785', () => {
         );
       }
     }
+
     const wrapper = mount(<Foo id="foo" />);
-    expect(willMount.callCount).to.equal(1);
-    expect(didMount.callCount).to.equal(1);
-    expect(willUnmount.callCount).to.equal(0);
+    expect(willMount.callCount).toEqual(1);
+    expect(didMount.callCount).toEqual(1);
+    expect(willUnmount.callCount).toEqual(0);
     wrapper.unmount();
-    expect(willMount.callCount).to.equal(1);
-    expect(didMount.callCount).to.equal(1);
-    expect(willUnmount.callCount).to.equal(1);
+    expect(willMount.callCount).toEqual(1);
+    expect(didMount.callCount).toEqual(1);
+    expect(willUnmount.callCount).toEqual(1);
   });
 })
